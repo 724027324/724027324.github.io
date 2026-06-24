@@ -39,11 +39,14 @@ test("content collection defines the expected post fields", () => {
 
 test("Decap CMS manages posts and uploads", () => {
   const cms = read("public/admin/config.yml");
+  const adminPage = read("src/pages/admin.astro");
 
   assert.match(cms, /repo:\s*724027324\/724027324\.github\.io/);
   assert.match(cms, /folder:\s*src\/content\/posts/);
   assert.match(cms, /media_folder:\s*public\/uploads/);
   assert.match(cms, /public_folder:\s*\/uploads/);
+  assert.match(adminPage, /decap-cms/);
+  assert.match(adminPage, /is:inline/);
 });
 
 test("GitHub Pages workflow builds with npm", () => {
