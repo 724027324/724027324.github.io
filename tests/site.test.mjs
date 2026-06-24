@@ -21,6 +21,7 @@ test("Astro blog source files are present", () => {
     "src/pages/index.astro",
     "src/pages/blog/index.astro",
     "src/pages/blog/[slug].astro",
+    "src/pages/admin.astro",
     "src/pages/about.astro",
     "src/styles/global.css",
   ].forEach((path) => {
