@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const slug = post.id.replace(/\.md$/, "");
+const date = post.data.publishDate.toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+---
+
+<article class="post-card">
+  <a class="post-card-image" href={`/blog/${slug}/`} aria-label={`阅读：${post.data.title}`}>
+    <img src={post.data.cover} alt="" loading="lazy" />
+  </a>
+  <div class="post-card-body">
+    <p class="post-date">{date}</p>
+    <h2><a href={`/blog/${slug}/`}>{post.data.title}</a></h2>
+    <p>{post.data.description}</p>
+    <div class="tag-row">
+      {post.data.tags.map((tag) => <span>{tag}</span>)}
+    </div>
+  </div>
+</article>

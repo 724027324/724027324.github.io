@@ -1,0 +1,24 @@
+backend:
+  name: github
+  repo: 724027324/724027324.github.io
+  branch: main
+
+locale: zh_Hans
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: posts
+    label: 文章
+    folder: src/content/posts
+    create: true
+    slug: "{{slug}}"
+    extension: md
+    format: frontmatter
+    fields:
+      - { label: 标题, name: title, widget: string }
+      - { label: 摘要, name: description, widget: text }
+      - { label: 发布日期, name: publishDate, widget: datetime, format: "YYYY-MM-DD" }
+      - { label: 封面图片, name: cover, widget: image }
+      - { label: 标签, name: tags, widget: list, required: false }
+      - { label: 正文, name: body, widget: markdown }
