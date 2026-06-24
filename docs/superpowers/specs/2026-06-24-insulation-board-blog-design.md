@@ -1,83 +1,83 @@
-# Insulation Board Personal Blog Design
+# 隔热板个人 Blog 设计规格
 
-## Goal
+## 目标
 
-Initialize this GitHub Pages repository as a personal blog about insulation board work, experience, field observations, and personal viewpoints.
+将当前 GitHub Pages 仓库初始化为一个围绕隔热板工作经验、现场观察、项目复盘和个人观点的个人 Blog。
 
-The site should feel like a lightweight image-led personal publication rather than a corporate product site. It should support original photos taken by the author and make it easy to publish future posts from a browser-based admin screen.
+站点应像一个轻量的图文个人专栏，而不是企业产品官网。它需要突出作者自己拍摄的图片，并支持以后通过浏览器后台发布文章和上传图片。
 
-## Audience
+## 读者
 
-The primary audience is readers who care about practical insulation board experience: industry peers, clients who want to understand the author's judgment, and future collaborators evaluating the author's field knowledge.
+主要读者是关注隔热板实践经验的人，包括行业同行、希望了解作者判断力的潜在客户，以及未来可能合作并想评估作者现场经验的人。
 
-## Chosen Direction
+## 视觉方向
 
-Use an image-first, minimalist editorial style:
+采用“极简图文式”的个人专栏风格：
 
-- Personal photos should be visually prominent.
-- Text should be restrained, readable, and focused on experience, observations, and viewpoints.
-- The homepage should immediately signal the topic through insulation-board-related imagery and post titles.
-- The site should avoid a marketing landing-page feel.
+- 作者拍摄的图片应占据重要视觉位置。
+- 文字应克制、清晰，重点放在经验、观察和观点上。
+- 首页第一屏应通过隔热板相关图片和文章标题直接传达主题。
+- 站点应避免营销型落地页的感觉。
 
-## Technical Approach
+## 技术方案
 
-Use Astro with Decap CMS and GitHub Pages.
+使用 Astro、Decap CMS 和 GitHub Pages。
 
-Astro will generate the static site. Decap CMS will provide an `/admin` editing interface where the author can create and edit posts and upload images. Posts will still be stored as Markdown files in the repository, and uploaded images will be stored in the repository under a public uploads directory.
+Astro 负责生成静态网站。Decap CMS 提供 `/admin` 后台，让作者可以在浏览器里创建、编辑文章并上传图片。文章最终仍以 Markdown 文件保存在仓库中，上传图片保存在公开资源目录中。
 
-This approach keeps hosting simple while providing a CMS workflow.
+这个方案可以保持 GitHub Pages 的简单部署方式，同时提供后台编辑体验。
 
-## Content Model
+## 内容模型
 
-Blog posts should include:
+每篇文章应包含：
 
-- Title
-- Publish date
-- Summary
-- Cover image
-- Tags
-- Body content in Markdown
+- 标题
+- 发布日期
+- 摘要
+- 封面图片
+- 标签
+- Markdown 正文
 
-Initial categories or tags can stay flexible, but the starter content should suggest directions such as field notes, material observations, project reflections, and personal viewpoints.
+初始标签不需要固定死，但示例内容应体现几个方向，例如现场手记、材料观察、项目复盘和个人观点。
 
-## Site Structure
+## 站点结构
 
-The initialized site should include:
+初始化后的站点应包含：
 
-- Homepage with image-led hero area, latest posts, and a compact personal introduction.
-- Blog listing page for all posts.
-- Individual post pages with cover image, metadata, tags, and readable article layout.
-- About page for the author's background and purpose.
-- Decap CMS admin page at `/admin`.
+- 首页：包含图文优先的首屏、最新文章和简短个人介绍。
+- Blog 列表页：展示全部文章。
+- 文章详情页：展示封面图、元信息、标签和适合阅读的正文排版。
+- 关于页面：介绍作者背景和写作目的。
+- Decap CMS 后台页面：路径为 `/admin`。
 
-## Assets
+## 图片与资源
 
-User-uploaded images should live under `public/uploads`. Starter placeholder visuals may be generated with CSS or local placeholder files, but the structure should be ready for real personal photos.
+用户上传的图片应存放在 `public/uploads`。初始版本可以使用本地占位图或样式生成的占位视觉，但项目结构必须为后续替换成真实个人照片做好准备。
 
-## Decap CMS Behavior
+## Decap CMS 行为
 
-The CMS should manage the posts collection in `src/content/posts`. It should expose the post fields defined above and store media in `public/uploads`.
+CMS 应管理 `src/content/posts` 中的文章集合。后台应暴露上面定义的文章字段，并将媒体文件保存到 `public/uploads`。
 
-Authentication for Decap CMS on GitHub Pages requires GitHub-backed identity configuration. The project should include the CMS config and clear README notes explaining what must be configured in GitHub or an external auth provider before `/admin` can publish changes.
+Decap CMS 在 GitHub Pages 上发布内容时需要配置 GitHub 相关身份认证。项目应包含 CMS 配置，并在 README 中清楚说明 `/admin` 发布文章前需要在 GitHub 或外部认证服务中完成哪些配置。
 
-## Deployment
+## 部署
 
-The repository is intended for GitHub Pages. The implementation should include a GitHub Actions workflow that builds Astro and deploys the generated static site to Pages.
+仓库目标部署到 GitHub Pages。实现中应包含 GitHub Actions 工作流，用于构建 Astro 并发布生成后的静态站点。
 
-## Testing And Verification
+## 测试与验收
 
-Before considering initialization complete:
+初始化完成前需要验证：
 
-- Install dependencies successfully.
-- Run the project build.
-- Run any available static checks.
-- Verify the development site can start locally.
-- Confirm CMS config files exist and point to the expected post and media paths.
+- 依赖可以成功安装。
+- 项目可以成功构建。
+- 可用的静态检查可以通过。
+- 本地开发站点可以启动。
+- CMS 配置文件存在，并指向预期的文章目录和媒体目录。
 
-## Out Of Scope For Initial Setup
+## 初始版本不包含
 
-- Paid or third-party cloud CMS.
-- Self-hosted backend services.
-- User accounts beyond Decap CMS publishing auth.
-- Search, comments, newsletter signup, or analytics.
-- Migrating real posts or photos unless the user provides them later.
+- 付费或第三方云 CMS。
+- 自托管后端服务。
+- 除 Decap CMS 发布认证之外的用户系统。
+- 搜索、评论、邮件订阅或访问统计。
+- 真实文章和真实照片迁移，除非用户后续提供素材。
