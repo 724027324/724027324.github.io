@@ -24,6 +24,8 @@ test("Astro blog source files are present", () => {
     "src/pages/admin.astro",
     "src/pages/about.astro",
     "src/styles/global.css",
+    "worker/src/oauth-proxy.js",
+    "worker/wrangler.toml",
   ].forEach((path) => {
     assert.equal(existsSync(join(root, path)), true, `${path} should exist`);
   });
@@ -63,11 +65,27 @@ test("GitHub Pages workflow builds with npm", () => {
 test("README documents local development, CMS, and deployment", () => {
   const readme = read("README.md");
 
-  ["npm run dev", "npm run build", "/admin", "src/content/posts", "public/uploads", "GitHub Actions", "OAuth Proxy"].forEach(
+  ["npm run dev", "npm run build", "npm run worker:deploy", "/admin", "src/content/posts", "public/uploads", "GitHub Actions", "OAuth Proxy", "GitHub OAuth App"].forEach(
     (text) => {
       assert.match(readme, new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     },
   );
+});
+
+test("OAuth Worker proxies Decap GitHub login", () => {
+  const worker = read("worker/src/oauth-proxy.js");
+  const wrangler = read("worker/wrangler.toml");
+  const packageJson = read("package.json");
+
+  assert.match(worker, /github\.com\/login\/oauth\/authorize/);
+  assert.match(worker, /github\.com\/login\/oauth\/access_token/);
+  assert.match(worker, /postMessage/);
+  assert.match(worker, /authorizing:github/);
+  assert.match(worker, /GITHUB_CLIENT_ID/);
+  assert.match(worker, /GITHUB_CLIENT_SECRET/);
+  assert.match(wrangler, /name\s*=\s*"yyb-decap-oauth"/);
+  assert.match(wrangler, /main\s*=\s*"src\/oauth-proxy\.js"/);
+  assert.match(packageJson, /worker:deploy/);
 });
 
 test("Chinese documents are readable UTF-8 text", () => {

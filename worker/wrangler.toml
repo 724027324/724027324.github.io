@@ -1,0 +1,7 @@
+name = "yyb-decap-oauth"
+main = "src/oauth-proxy.js"
+compatibility_date = "2026-06-25"
+workers_dev = true
+
+[vars]
+GITHUB_SCOPE = "repo"

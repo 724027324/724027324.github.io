@@ -27,6 +27,54 @@ npm run build
 
 Decap CMS 已配置为使用 GitHub 后端。GitHub Pages 是静态托管，不能直接完成 GitHub OAuth 登录，所以后台需要一个 OAuth Proxy。
 
+本仓库已经包含 Cloudflare Worker 版 OAuth Proxy，位置在 `worker/`。
+
+### 1. 创建 GitHub OAuth App
+
+进入 GitHub：
+
+`Settings` -> `Developer settings` -> `OAuth Apps` -> `New OAuth App`
+
+建议填写：
+
+- Application name: `yyb Decap CMS`
+- Homepage URL: `https://724027324.github.io`
+- Authorization callback URL: 先填临时地址 `https://yyb-decap-oauth.YOUR_WORKERS_SUBDOMAIN.workers.dev/callback`
+
+创建后记下：
+
+- Client ID
+- Client Secret
+
+### 2. 写入 Worker 密钥
+
+在项目目录执行：
+
+```bash
+npm install
+wrangler secret put GITHUB_CLIENT_ID --config worker/wrangler.toml
+wrangler secret put GITHUB_CLIENT_SECRET --config worker/wrangler.toml
+```
+
+命令会要求你输入对应值。不要把 Client Secret 写进仓库。
+
+### 3. 部署 OAuth Proxy
+
+不要在 `C:\WINDOWS\system32` 里执行部署命令。请先进入项目目录：
+
+```powershell
+cd E:\work\724027324.github.io\.worktrees\insulation-board-blog
+npm run worker:deploy
+```
+
+部署成功后，终端会输出真实 Worker 地址，例如：
+
+```text
+https://yyb-decap-oauth.example-subdomain.workers.dev
+```
+
+### 4. 更新 Decap CMS 配置
+
 当前后台配置在 `public/admin/config.yml`：
 
 ```yaml
@@ -38,7 +86,13 @@ backend:
   auth_endpoint: /auth
 ```
 
-你需要先部署一个 GitHub OAuth Proxy，然后把 `base_url` 替换成真实地址。未替换前，后台不能完成 GitHub 登录。
+把 `base_url` 替换成部署成功后输出的真实 Worker 地址。随后回到 GitHub OAuth App，把 Authorization callback URL 改成：
+
+```text
+你的真实 Worker 地址/callback
+```
+
+未替换前，后台不能完成 GitHub 登录。
 
 如果后台跳到 `api.netlify.com/auth?...site_id=127.0.0.1` 并显示 `Not Found`，说明 Decap CMS 没有可用的 OAuth Proxy，正在尝试默认 Netlify 认证入口。
 
