@@ -42,6 +42,8 @@ test("Decap CMS manages posts and uploads", () => {
   const adminPage = read("src/pages/admin.astro");
 
   assert.match(cms, /repo:\s*724027324\/724027324\.github\.io/);
+  assert.match(cms, /base_url:\s*https:\/\/yyb-decap-oauth\.YOUR_WORKERS_SUBDOMAIN\.workers\.dev/);
+  assert.match(cms, /auth_endpoint:\s*\/auth/);
   assert.match(cms, /folder:\s*src\/content\/posts/);
   assert.match(cms, /media_folder:\s*public\/uploads/);
   assert.match(cms, /public_folder:\s*\/uploads/);
@@ -61,11 +63,23 @@ test("GitHub Pages workflow builds with npm", () => {
 test("README documents local development, CMS, and deployment", () => {
   const readme = read("README.md");
 
-  ["npm run dev", "npm run build", "/admin", "src/content/posts", "public/uploads", "GitHub Actions"].forEach(
+  ["npm run dev", "npm run build", "/admin", "src/content/posts", "public/uploads", "GitHub Actions", "OAuth Proxy"].forEach(
     (text) => {
       assert.match(readme, new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     },
   );
+});
+
+test("Chinese documents are readable UTF-8 text", () => {
+  [
+    "README.md",
+    "public/admin/config.yml",
+    "src/pages/admin.astro",
+    "docs/superpowers/specs/2026-06-24-insulation-board-blog-design.md",
+    "docs/superpowers/plans/2026-06-24-insulation-board-blog.md",
+  ].forEach((path) => {
+    assert.doesNotMatch(read(path), /鐨|鍚|涓|杩|鏂|闅|绔/, `${path} should not contain mojibake`);
+  });
 });
 
 test("public site uses yyb branding and keeps admin out of navigation", () => {

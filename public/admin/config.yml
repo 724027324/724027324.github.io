@@ -2,6 +2,8 @@ backend:
   name: github
   repo: 724027324/724027324.github.io
   branch: main
+  base_url: https://yyb-decap-oauth.YOUR_WORKERS_SUBDOMAIN.workers.dev
+  auth_endpoint: /auth
 
 locale: zh_Hans
 media_folder: public/uploads
