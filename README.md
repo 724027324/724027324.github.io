@@ -1,6 +1,6 @@
-# 隔热板个人 Blog
+# yyb 的 Blog
 
-这是一个使用 Astro、Decap CMS 和 GitHub Pages 搭建的个人 Blog，用来记录隔热板相关的现场经验、材料观察、项目复盘和个人观点。
+这是一个使用 Astro、Decap CMS 和 GitHub Pages 搭建的个人 Blog，用来记录 yyb 相关的现场经验、材料观察、项目复盘和个人观点。
 
 ## 本地开发
 
@@ -21,7 +21,7 @@ npm run build
 
 文章存放在 `src/content/posts`，图片上传目录为 `public/uploads`。
 
-后台入口为 `/admin`。Decap CMS 已配置为使用 GitHub 后端，但正式发布文章前还需要完成 GitHub Pages 与 Decap CMS 所需的身份认证配置。常见做法是配置 Decap CMS 支持的 GitHub OAuth 服务，或部署自己的 OAuth 代理。
+公开网站入口是 `/`，普通访客直接访问公开页面，不需要登录。后台入口是 `/admin`，不会显示在网站导航中；它只给作者管理内容使用。Decap CMS 已配置为使用 GitHub 后端，因此进入后台发布文章或上传图片时需要 GitHub 登录和对应仓库权限。
 
 ## 部署
 

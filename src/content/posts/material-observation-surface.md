@@ -1,5 +1,5 @@
 ---
-title: "隔热板表面状态给我的三个提醒"
+title: "yyb 表面状态给我的三个提醒"
 description: "从表面状态、运输痕迹和安装前检查三个角度记录材料观察。"
 publishDate: 2026-06-18
 cover: "/images/placeholder-board-stack.svg"

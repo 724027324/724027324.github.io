@@ -67,3 +67,31 @@ test("README documents local development, CMS, and deployment", () => {
     },
   );
 });
+
+test("public site uses yyb branding and keeps admin out of navigation", () => {
+  const oldBrand = "\u9694\u70ed\u677f";
+  const publicFiles = [
+    "README.md",
+    "public/admin/index.html",
+    "public/images/placeholder-board-detail.svg",
+    "public/images/placeholder-board-stack.svg",
+    "public/images/placeholder-worksite.svg",
+    "src/components/PhotoMosaic.astro",
+    "src/content/posts/field-note-edge-detail.md",
+    "src/content/posts/material-observation-surface.md",
+    "src/content/posts/project-reflection-first-post.md",
+    "src/layouts/BaseLayout.astro",
+    "src/pages/about.astro",
+    "src/pages/admin.astro",
+    "src/pages/blog/index.astro",
+    "src/pages/index.astro",
+  ];
+
+  publicFiles.forEach((path) => {
+    assert.equal(read(path).includes(oldBrand), false, `${path} should use yyb branding`);
+  });
+
+  const layout = read("src/layouts/BaseLayout.astro");
+  assert.match(layout, /yyb 的 Blog/);
+  assert.doesNotMatch(layout, /href="\/admin\/"/);
+});
