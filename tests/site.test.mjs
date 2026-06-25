@@ -44,7 +44,7 @@ test("Decap CMS manages posts and uploads", () => {
   const adminPage = read("src/pages/admin.astro");
 
   assert.match(cms, /repo:\s*724027324\/724027324\.github\.io/);
-  assert.match(cms, /base_url:\s*https:\/\/yyb-decap-oauth\.YOUR_WORKERS_SUBDOMAIN\.workers\.dev/);
+  assert.match(cms, /base_url:\s*https:\/\/yyb-decap-oauth\.724027324\.workers\.dev/);
   assert.match(cms, /auth_endpoint:\s*\/auth/);
   assert.match(cms, /folder:\s*src\/content\/posts/);
   assert.match(cms, /media_folder:\s*public\/uploads/);
@@ -67,9 +67,10 @@ test("README documents local development, CMS, and deployment", () => {
 
   ["npm run dev", "npm run build", "npm run worker:deploy", "/admin", "src/content/posts", "public/uploads", "GitHub Actions", "OAuth Proxy", "GitHub OAuth App"].forEach(
     (text) => {
-      assert.match(readme, new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(readme, new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     },
   );
+  assert.match(readme, /https:\/\/yyb-decap-oauth\.724027324\.workers\.dev/);
 });
 
 test("OAuth Worker proxies Decap GitHub login", () => {
