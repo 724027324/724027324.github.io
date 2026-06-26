@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import PhotoMosaic from "../components/PhotoMosaic.astro";
 import PostCard from "../components/PostCard.astro";
+import homeSettings from "../data/home.json";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const posts = (await getCollection("posts")).sort(
@@ -11,20 +12,26 @@ const latestPosts = posts.slice(0, 3);
 ---
 
 <BaseLayout title="yyb 的 Blog" description="记录 yyb 现场经验、材料观察、项目复盘和个人观点。">
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="eyebrow">现场照片 / 经验记录 / 个人观点</p>
-      <h1>用图片记录 yyb 项目里的判断细节</h1>
-      <p class="lede">
-        这里不是产品手册，而是一份长期更新的个人笔记：材料到场、施工边角、项目沟通和复盘，都值得被认真记录。
-      </p>
-      <div class="hero-actions">
-        <a class="button" href="/blog/">查看文章</a>
-        <a class="text-link" href="/about/">了解写作目的</a>
-      </div>
-    </div>
-    <PhotoMosaic />
-  </section>
+  {
+    homeSettings.showHero && (
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">{homeSettings.eyebrow}</p>
+          <h1>{homeSettings.title}</h1>
+          <p class="lede">{homeSettings.description}</p>
+          <div class="hero-actions">
+            <a class="button" href={homeSettings.primaryButtonUrl}>
+              {homeSettings.primaryButtonLabel}
+            </a>
+            <a class="text-link" href={homeSettings.secondaryButtonUrl}>
+              {homeSettings.secondaryButtonLabel}
+            </a>
+          </div>
+        </div>
+        <PhotoMosaic images={homeSettings.images} />
+      </section>
+    )
+  }
 
   <section class="intro-band">
     <div>

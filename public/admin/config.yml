@@ -10,6 +10,29 @@ media_folder: public/uploads
 public_folder: /uploads
 
 collections:
+  - name: site_settings
+    label: 站点设置
+    files:
+      - name: home
+        label: 首页设置
+        file: src/data/home.json
+        format: json
+        fields:
+          - { label: 显示首页首屏, name: showHero, widget: boolean, default: true }
+          - { label: 顶部小字, name: eyebrow, widget: string }
+          - { label: 大标题, name: title, widget: string }
+          - { label: 简介, name: description, widget: text }
+          - { label: 主按钮文字, name: primaryButtonLabel, widget: string }
+          - { label: 主按钮链接, name: primaryButtonUrl, widget: string }
+          - { label: 次按钮文字, name: secondaryButtonLabel, widget: string }
+          - { label: 次按钮链接, name: secondaryButtonUrl, widget: string }
+          - label: 首屏图片
+            name: images
+            widget: list
+            min: 1
+            max: 3
+            field: { label: 图片, name: image, widget: image }
+
   - name: posts
     label: 文章
     folder: src/content/posts

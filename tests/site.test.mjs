@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -9,11 +9,22 @@ function read(path) {
   return readFileSync(join(root, path), "utf8");
 }
 
+function listFiles(path) {
+  return readdirSync(join(root, path), { withFileTypes: true }).flatMap((entry) => {
+    const relativePath = `${path}/${entry.name}`;
+    if (entry.isDirectory()) {
+      return listFiles(relativePath);
+    }
+    return relativePath;
+  });
+}
+
 test("Astro blog source files are present", () => {
   [
     "astro.config.mjs",
     "tsconfig.json",
     "src/content/config.ts",
+    "src/content/posts/.gitkeep",
     "src/layouts/BaseLayout.astro",
     "src/layouts/PostLayout.astro",
     "src/components/PostCard.astro",
@@ -24,6 +35,7 @@ test("Astro blog source files are present", () => {
     "src/pages/admin.astro",
     "src/pages/about.astro",
     "src/styles/global.css",
+    "src/data/home.json",
     "worker/src/oauth-proxy.js",
     "worker/wrangler.toml",
   ].forEach((path) => {
@@ -49,8 +61,27 @@ test("Decap CMS manages posts and uploads", () => {
   assert.match(cms, /folder:\s*src\/content\/posts/);
   assert.match(cms, /media_folder:\s*public\/uploads/);
   assert.match(cms, /public_folder:\s*\/uploads/);
+  assert.match(cms, /name:\s*site_settings/);
+  assert.match(cms, /label:\s*首页设置/);
+  assert.match(cms, /file:\s*src\/data\/home\.json/);
+  assert.match(cms, /name:\s*showHero/);
   assert.match(adminPage, /decap-cms/);
   assert.match(adminPage, /is:inline/);
+});
+
+test("home page reads editable hero settings", () => {
+  const homeSettings = JSON.parse(read("src/data/home.json"));
+  const indexPage = read("src/pages/index.astro");
+
+  ["showHero", "eyebrow", "title", "description", "primaryButtonLabel", "primaryButtonUrl", "secondaryButtonLabel", "secondaryButtonUrl", "images"].forEach(
+    (field) => {
+      assert.ok(Object.hasOwn(homeSettings, field), `home settings should include ${field}`);
+    },
+  );
+  assert.equal(typeof homeSettings.showHero, "boolean");
+  assert.match(indexPage, /homeSettings/);
+  assert.match(indexPage, /homeSettings\.showHero/);
+  assert.match(indexPage, /<PhotoMosaic images=\{homeSettings\.images\}/);
 });
 
 test("GitHub Pages workflow builds with npm", () => {
@@ -110,9 +141,7 @@ test("public site uses yyb branding and keeps admin out of navigation", () => {
     "public/images/placeholder-board-stack.svg",
     "public/images/placeholder-worksite.svg",
     "src/components/PhotoMosaic.astro",
-    "src/content/posts/field-note-edge-detail.md",
-    "src/content/posts/material-observation-surface.md",
-    "src/content/posts/project-reflection-first-post.md",
+    ...listFiles("src/content/posts").filter((path) => statSync(join(root, path)).isFile()),
     "src/layouts/BaseLayout.astro",
     "src/pages/about.astro",
     "src/pages/admin.astro",
