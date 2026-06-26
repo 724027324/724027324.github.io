@@ -63,7 +63,7 @@ wrangler secret put GITHUB_CLIENT_SECRET --config worker/wrangler.toml
 不要在 `C:\WINDOWS\system32` 里执行部署命令。请先进入项目目录：
 
 ```powershell
-cd E:\work\724027324.github.io\.worktrees\insulation-board-blog
+cd E:\work\724027324.github.io
 npm run worker:deploy
 ```
 

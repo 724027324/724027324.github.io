@@ -1,11 +1,9 @@
 ---
-import { getCollection } from "astro:content";
 import PostCard from "../../components/PostCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPosts } from "../../lib/posts";
 
-const posts = (await getCollection("posts")).sort(
-  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime(),
-);
+const posts = await getPosts();
 ---
 
 <BaseLayout title="全部文章" description="浏览 yyb 的 Blog 的全部文章。">
@@ -14,7 +12,13 @@ const posts = (await getCollection("posts")).sort(
     <h1>全部文章</h1>
     <p class="lede">按时间整理现场手记、材料观察、项目复盘和个人观点。</p>
   </section>
-  <section class="post-grid archive-grid">
-    {posts.map((post) => <PostCard post={post} />)}
-  </section>
+  {
+    posts.length > 0 ? (
+      <section class="post-grid archive-grid">
+        {posts.map((post) => <PostCard post={post} />)}
+      </section>
+    ) : (
+      <p class="empty-state archive-grid">暂无文章。发布第一篇内容后会显示在这里。</p>
+    )
+  }
 </BaseLayout>

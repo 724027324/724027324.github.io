@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync, readdirSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -25,6 +26,7 @@ test("Astro blog source files are present", () => {
     "tsconfig.json",
     "src/content/config.ts",
     "src/content/posts/.gitkeep",
+    "src/lib/posts.ts",
     "src/layouts/BaseLayout.astro",
     "src/layouts/PostLayout.astro",
     "src/components/PostCard.astro",
@@ -72,6 +74,7 @@ test("Decap CMS manages posts and uploads", () => {
 test("home page reads editable hero settings", () => {
   const homeSettings = JSON.parse(read("src/data/home.json"));
   const indexPage = read("src/pages/index.astro");
+  const photoMosaic = read("src/components/PhotoMosaic.astro");
 
   ["showHero", "eyebrow", "title", "description", "primaryButtonLabel", "primaryButtonUrl", "secondaryButtonLabel", "secondaryButtonUrl", "images"].forEach(
     (field) => {
@@ -82,6 +85,58 @@ test("home page reads editable hero settings", () => {
   assert.match(indexPage, /homeSettings/);
   assert.match(indexPage, /homeSettings\.showHero/);
   assert.match(indexPage, /<PhotoMosaic images=\{homeSettings\.images\}/);
+  assert.doesNotMatch(photoMosaic, /placeholder-board/);
+});
+
+test("empty posts collection builds without loader warnings", () => {
+  const result = spawnSync(process.execPath, [process.env.npm_execpath, "run", "build"], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, output);
+  assert.doesNotMatch(output, /No files found matching .*src\\content\\posts/);
+});
+
+test("new markdown posts generate detail pages", () => {
+  const postPath = join(root, "src/content/posts/codex-render-check.md");
+  writeFileSync(
+    postPath,
+    `---\ntitle: 临时渲染检查\ndescription: 用于验证新增文章仍可渲染。\npublishDate: 2026-06-26\ncover: /images/placeholder-worksite.svg\ntags:\n  - 测试\n---\n\n这是一篇临时检查文章。\n`,
+    "utf8",
+  );
+
+  try {
+    const result = spawnSync(process.execPath, [process.env.npm_execpath, "run", "build"], {
+      cwd: root,
+      encoding: "utf8",
+    });
+    const output = `${result.stdout}\n${result.stderr}`;
+
+    assert.equal(result.status, 0, output);
+    assert.match(output, /blog\/codex-render-check\/index\.html/);
+  } finally {
+    unlinkSync(postPath);
+  }
+});
+
+test("content loading uses public Astro APIs", () => {
+  const config = read("src/content/config.ts");
+  const posts = read("src/lib/posts.ts");
+  const readme = read("README.md");
+
+  assert.doesNotMatch(config, new RegExp("entry" + "Types"));
+  assert.doesNotMatch(config, /type:\s*"content"/);
+  assert.match(posts, /getPosts/);
+  assert.doesNotMatch(readme, /\\.worktrees/);
+  assert.doesNotMatch(readme, new RegExp(["insulation", "board", "blog"].join("-")));
+});
+
+test("empty article lists have an explicit empty state", () => {
+  assert.match(read("src/pages/index.astro"), /暂无文章/);
+  assert.match(read("src/pages/blog/index.astro"), /暂无文章/);
+  assert.match(read("src/styles/global.css"), /\.empty-state/);
 });
 
 test("GitHub Pages workflow builds with npm", () => {
@@ -125,15 +180,14 @@ test("Chinese documents are readable UTF-8 text", () => {
     "README.md",
     "public/admin/config.yml",
     "src/pages/admin.astro",
-    "docs/superpowers/specs/2026-06-24-insulation-board-blog-design.md",
-    "docs/superpowers/plans/2026-06-24-insulation-board-blog.md",
+    "docs/superpowers/specs/2026-06-24-yyb-blog-design.md",
+    "docs/superpowers/plans/2026-06-24-yyb-blog.md",
   ].forEach((path) => {
     assert.doesNotMatch(read(path), /鐨|鍚|涓|杩|鏂|闅|绔/, `${path} should not contain mojibake`);
   });
 });
 
 test("public site uses yyb branding and keeps admin out of navigation", () => {
-  const oldBrand = "\u9694\u70ed\u677f";
   const publicFiles = [
     "README.md",
     "public/admin/index.html",
@@ -150,7 +204,7 @@ test("public site uses yyb branding and keeps admin out of navigation", () => {
   ];
 
   publicFiles.forEach((path) => {
-    assert.equal(read(path).includes(oldBrand), false, `${path} should use yyb branding`);
+    assert.doesNotMatch(read(path), new RegExp(["insulation", "board", "blog"].join("-")));
   });
 
   const layout = read("src/layouts/BaseLayout.astro");

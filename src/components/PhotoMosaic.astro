@@ -1,20 +1,16 @@
 ---
 interface Props {
-  images?: string[];
+  images: string[];
 }
 
-const fallbackImages = [
-  "/images/placeholder-board-detail.svg",
-  "/images/placeholder-board-stack.svg",
-  "/images/placeholder-worksite.svg",
-];
-
-const { images = fallbackImages } = Astro.props;
-const displayImages = [...images, ...fallbackImages].slice(0, 3);
+const { images } = Astro.props;
+const displayImages = images.slice(0, 3);
 ---
 
 <div class="photo-mosaic" aria-label="yyb 现场图片拼贴">
-  <img class="mosaic-large" src={displayImages[0]} alt="" loading="eager" />
-  <img src={displayImages[1]} alt="" loading="eager" />
-  <img src={displayImages[2]} alt="" loading="eager" />
+  {
+    displayImages.map((src, index) => (
+      <img class={index === 0 ? "mosaic-large" : undefined} src={src} alt="" loading="eager" />
+    ))
+  }
 </div>
