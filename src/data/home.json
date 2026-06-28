@@ -1,15 +1,15 @@
 {
-  "showHero": true,
-  "eyebrow": "现场照片 / 经验记录 / 个人观点",
-  "title": "用图片记录 yyb 项目里的判断细节",
-  "description": "这里不是产品手册，而是一份长期更新的个人笔记：材料到场、施工边角、项目沟通和复盘，都值得被认真记录。",
   "primaryButtonLabel": "查看文章",
-  "primaryButtonUrl": "/blog/",
-  "secondaryButtonLabel": "了解写作目的",
   "secondaryButtonUrl": "/about/",
+  "eyebrow": "现场照片 / 经验记录 / 个人观点",
+  "secondaryButtonLabel": "了解写作目的",
+  "showHero": true,
+  "title": "用图片记录 yyb 项目里的判断细节",
   "images": [
-    "/images/placeholder-board-detail.svg",
-    "/images/placeholder-board-stack.svg",
-    "/images/placeholder-worksite.svg"
-  ]
+    "/uploads/烂叶子.jpg",
+    "/uploads/dsc06544.jpg",
+    "/uploads/dsc07058.jpg"
+  ],
+  "primaryButtonUrl": "/blog/",
+  "description": "这里不是产品手册，而是一份长期更新的个人笔记：材料到场、施工边角、项目沟通和复盘，都值得被认真记录。"
 }
