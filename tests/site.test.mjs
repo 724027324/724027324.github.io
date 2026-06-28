@@ -26,6 +26,8 @@ test("Astro blog source files are present", () => {
     "tsconfig.json",
     "src/content/config.ts",
     "src/content/posts/.gitkeep",
+    "public/uploads/.gitkeep",
+    "public/admin/multiple-upload.js",
     "src/lib/posts.ts",
     "src/layouts/BaseLayout.astro",
     "src/layouts/PostLayout.astro",
@@ -61,14 +63,29 @@ test("Decap CMS manages posts and uploads", () => {
   assert.match(cms, /base_url:\s*https:\/\/yyb-decap-oauth\.724027324\.workers\.dev/);
   assert.match(cms, /auth_endpoint:\s*\/auth/);
   assert.match(cms, /folder:\s*src\/content\/posts/);
-  assert.match(cms, /media_folder:\s*public\/uploads/);
-  assert.match(cms, /public_folder:\s*\/uploads/);
+  assert.match(cms, /media_folder:\s*"?public\/uploads"?/);
+  assert.match(cms, /public_folder:\s*"?\/uploads"?/);
   assert.match(cms, /name:\s*site_settings/);
   assert.match(cms, /label:\s*首页设置/);
   assert.match(cms, /file:\s*src\/data\/home\.json/);
   assert.match(cms, /name:\s*showHero/);
+  assert.match(cms, /allow_multiple:\s*true/);
+  assert.match(cms, /multiple:\s*true/);
   assert.match(adminPage, /decap-cms/);
+  assert.match(adminPage, /cms-config-url/);
+  assert.match(adminPage, /decap-cms@3\.6\.4/);
+  assert.match(adminPage, /multiple-upload\.js/);
   assert.match(adminPage, /is:inline/);
+});
+
+test("admin upload button can fan out multiple selected files", () => {
+  const uploadPatch = read("public/admin/multiple-upload.js");
+
+  assert.match(uploadPatch, /MutationObserver/);
+  assert.match(uploadPatch, /DataTransfer/);
+  assert.match(uploadPatch, /input\.multiple = true/);
+  assert.match(uploadPatch, /input\.files\.length < 2/);
+  assert.match(uploadPatch, /dispatchEvent\(new Event\("change"/);
 });
 
 test("home page reads editable hero settings", () => {
