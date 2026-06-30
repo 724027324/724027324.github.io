@@ -21,6 +21,8 @@ npm run build
 
 文章存放在 `src/content/posts`，图片上传目录为 `public/uploads`。
 
+后台的“作品集图片”字段使用 `public/uploads-manifest.json` 里的图片清单展示已上传图片，支持一次勾选多张。`npm run dev`、`npm test` 和 `npm run build` 会自动刷新这个清单。
+
 公开网站入口是 `/`，普通访客直接访问公开页面，不需要登录。后台入口是 `/admin`，不会显示在网站导航中；它只给作者管理内容使用。
 
 ## 后台登录

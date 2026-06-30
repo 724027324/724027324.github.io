@@ -27,7 +27,9 @@ test("Astro blog source files are present", () => {
     "src/content/config.ts",
     "src/content/posts/.gitkeep",
     "public/uploads/.gitkeep",
-    "public/admin/multiple-upload.js",
+    "public/uploads-manifest.json",
+    "public/admin/gallery-widget.js",
+    "scripts/generate-upload-manifest.mjs",
     "src/lib/posts.ts",
     "src/layouts/BaseLayout.astro",
     "src/layouts/PostLayout.astro",
@@ -36,6 +38,8 @@ test("Astro blog source files are present", () => {
     "src/pages/index.astro",
     "src/pages/blog/index.astro",
     "src/pages/blog/[slug].astro",
+    "src/pages/portfolio/index.astro",
+    "src/pages/portfolio/[slug].astro",
     "src/pages/admin.astro",
     "src/pages/about.astro",
     "src/styles/global.css",
@@ -45,12 +49,19 @@ test("Astro blog source files are present", () => {
   ].forEach((path) => {
     assert.equal(existsSync(join(root, path)), true, `${path} should exist`);
   });
+
+  [
+    "public/admin/index.html",
+    "public/admin/multiple-upload.js",
+  ].forEach((path) => {
+    assert.equal(existsSync(join(root, path)), false, `${path} should not exist`);
+  });
 });
 
 test("content collection defines the expected post fields", () => {
   const config = read("src/content/config.ts");
 
-  ["title", "description", "publishDate", "cover", "tags"].forEach((field) => {
+  ["type", "title", "description", "publishDate", "cover", "tags", "gallery"].forEach((field) => {
     assert.match(config, new RegExp(`${field}:`));
   });
 });
@@ -69,23 +80,39 @@ test("Decap CMS manages posts and uploads", () => {
   assert.match(cms, /label:\s*首页设置/);
   assert.match(cms, /file:\s*src\/data\/home\.json/);
   assert.match(cms, /name:\s*showHero/);
-  assert.match(cms, /allow_multiple:\s*true/);
-  assert.match(cms, /multiple:\s*true/);
+  assert.match(cms, /name:\s*type/);
+  assert.match(cms, /图文文章/);
+  assert.match(cms, /作品集/);
+  assert.match(cms, /name:\s*gallery/);
+  const galleryConfig = cms.slice(cms.indexOf("name: gallery"));
+  assert.match(galleryConfig, /widget:\s*yyb_gallery/);
+  assert.match(galleryConfig, /manifest_url:\s*\/uploads-manifest\.json/);
+  assert.doesNotMatch(galleryConfig, /widget:\s*image/);
+  assert.doesNotMatch(galleryConfig, /\n\s+fields:\s*\n/);
   assert.match(adminPage, /decap-cms/);
   assert.match(adminPage, /cms-config-url/);
   assert.match(adminPage, /decap-cms@3\.6\.4/);
-  assert.match(adminPage, /multiple-upload\.js/);
+  assert.match(adminPage, /gallery-widget\.js/);
+  assert.doesNotMatch(adminPage, /multiple-upload/);
   assert.match(adminPage, /is:inline/);
 });
 
-test("admin upload button can fan out multiple selected files", () => {
-  const uploadPatch = read("public/admin/multiple-upload.js");
+test("portfolio gallery widget supports selecting multiple uploaded images", () => {
+  const widget = read("public/admin/gallery-widget.js");
+  const packageJson = read("package.json");
+  const manifest = JSON.parse(read("public/uploads-manifest.json"));
 
-  assert.match(uploadPatch, /MutationObserver/);
-  assert.match(uploadPatch, /DataTransfer/);
-  assert.match(uploadPatch, /input\.multiple = true/);
-  assert.match(uploadPatch, /input\.files\.length < 2/);
-  assert.match(uploadPatch, /dispatchEvent\(new Event\("change"/);
+  assert.match(widget, /CMS\.registerWidget\("yyb_gallery"/);
+  assert.match(widget, /createClass/);
+  assert.match(widget, /manifest_url/);
+  assert.match(widget, /uploads-manifest\.json/);
+  assert.doesNotMatch(widget, /api\.github\.com/);
+  assert.doesNotMatch(widget, /setTimeout\(registerGalleryWidget/);
+  assert.match(widget, /type:\s*"checkbox"/);
+  assert.match(widget, /onChange\(nextSelection\)/);
+  assert.match(packageJson, /generate-upload-manifest/);
+  assert.ok(Array.isArray(manifest.images));
+  assert.equal(Object.hasOwn(manifest, "generatedAt"), false);
 });
 
 test("home page reads editable hero settings", () => {
@@ -138,6 +165,38 @@ test("new markdown posts generate detail pages", () => {
   }
 });
 
+test("article and portfolio entries build separate routes", () => {
+  const articlePath = join(root, "src/content/posts/codex-article-check.md");
+  const portfolioPath = join(root, "src/content/posts/codex-portfolio-check.md");
+  writeFileSync(
+    articlePath,
+    `---\ntype: article\ntitle: 临时图文检查\ndescription: 用于验证图文文章路由。\npublishDate: 2026-06-26\ncover: /images/placeholder-worksite.svg\ntags:\n  - 测试\n---\n\n这是一篇临时图文文章。\n`,
+    "utf8",
+  );
+  writeFileSync(
+    portfolioPath,
+    `---\ntype: portfolio\ntitle: 临时作品集检查\ndescription: 用于验证作品集路由。\npublishDate: 2026-06-26\ncover: /images/placeholder-board-detail.svg\ntags:\n  - 测试\ngallery:\n  - /images/placeholder-board-detail.svg\n  - /images/placeholder-board-stack.svg\n---\n\n这是一个临时作品集说明。\n`,
+    "utf8",
+  );
+
+  try {
+    const result = spawnSync(process.execPath, [process.env.npm_execpath, "run", "build"], {
+      cwd: root,
+      encoding: "utf8",
+    });
+    const output = `${result.stdout}\n${result.stderr}`;
+
+    assert.equal(result.status, 0, output);
+    assert.match(output, /blog\/codex-article-check\/index\.html/);
+    assert.match(output, /portfolio\/codex-portfolio-check\/index\.html/);
+    assert.doesNotMatch(output, /blog\/codex-portfolio-check\/index\.html/);
+    assert.doesNotMatch(output, /portfolio\/codex-article-check\/index\.html/);
+  } finally {
+    unlinkSync(articlePath);
+    unlinkSync(portfolioPath);
+  }
+});
+
 test("content loading uses public Astro APIs", () => {
   const config = read("src/content/config.ts");
   const posts = read("src/lib/posts.ts");
@@ -153,7 +212,18 @@ test("content loading uses public Astro APIs", () => {
 test("empty article lists have an explicit empty state", () => {
   assert.match(read("src/pages/index.astro"), /暂无文章/);
   assert.match(read("src/pages/blog/index.astro"), /暂无文章/);
+  assert.match(read("src/pages/portfolio/index.astro"), /暂无作品/);
   assert.match(read("src/styles/global.css"), /\.empty-state/);
+});
+
+test("portfolio has a dedicated navigation entry and page copy", () => {
+  const layout = read("src/layouts/BaseLayout.astro");
+  const portfolioIndex = read("src/pages/portfolio/index.astro");
+
+  assert.match(layout, /href="\/portfolio\/"/);
+  assert.match(layout, />作品集</);
+  assert.match(portfolioIndex, /作品集/);
+  assert.match(portfolioIndex, /Portfolio/);
 });
 
 test("GitHub Pages workflow builds with npm", () => {
@@ -207,7 +277,6 @@ test("Chinese documents are readable UTF-8 text", () => {
 test("public site uses yyb branding and keeps admin out of navigation", () => {
   const publicFiles = [
     "README.md",
-    "public/admin/index.html",
     "public/images/placeholder-board-detail.svg",
     "public/images/placeholder-board-stack.svg",
     "public/images/placeholder-worksite.svg",
@@ -217,6 +286,7 @@ test("public site uses yyb branding and keeps admin out of navigation", () => {
     "src/pages/about.astro",
     "src/pages/admin.astro",
     "src/pages/blog/index.astro",
+    "src/pages/portfolio/index.astro",
     "src/pages/index.astro",
   ];
 

@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const date = post.data.publishDate.toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="portfolio-page">
+    <header class="post-hero portfolio-hero">
+      <p class="eyebrow">{date} / Portfolio</p>
+      <h1>{post.data.title}</h1>
+      <p class="lede">{post.data.description}</p>
+      <div class="tag-row" aria-label="作品集标签">
+        {post.data.tags.map((tag) => <span>{tag}</span>)}
+      </div>
+    </header>
+    <section class="portfolio-grid" aria-label="作品集图片">
+      {
+        post.data.gallery.map((image) => (
+          <figure>
+            <img src={image} alt="" loading="lazy" />
+          </figure>
+        ))
+      }
+    </section>
+    <div class="article-body">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

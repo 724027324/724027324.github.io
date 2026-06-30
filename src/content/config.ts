@@ -48,11 +48,13 @@ const postsMarkdownLoader: Loader = {
 const posts = defineCollection({
   loader: postsMarkdownLoader,
   schema: z.object({
+    type: z.enum(["article", "portfolio"]).default("article"),
     title: z.string(),
     description: z.string(),
     publishDate: z.coerce.date(),
     cover: z.string(),
     tags: z.array(z.string()).default([]),
+    gallery: z.array(z.string()).default([]),
   }),
 });
 

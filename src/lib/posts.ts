@@ -15,6 +15,14 @@ export async function getPosts() {
   );
 }
 
+export async function getArticles() {
+  return (await getPosts()).filter((post) => post.data.type === "article");
+}
+
+export async function getPortfolioItems() {
+  return (await getPosts()).filter((post) => post.data.type === "portfolio");
+}
+
 async function listMarkdownFiles(directory: URL): Promise<URL[]> {
   const entries = await fs.readdir(directory, { withFileTypes: true });
   const files = await Promise.all(

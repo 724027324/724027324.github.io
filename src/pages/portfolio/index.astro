@@ -1,0 +1,24 @@
+---
+import PortfolioCard from "../../components/PortfolioCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPortfolioItems } from "../../lib/posts";
+
+const posts = await getPortfolioItems();
+---
+
+<BaseLayout title="作品集" description="浏览 yyb 的摄影作品集。">
+  <section class="page-heading">
+    <p class="eyebrow">Portfolio</p>
+    <h1>作品集</h1>
+    <p class="lede">用成组图片保存现场、日常和个人观察里的画面。</p>
+  </section>
+  {
+    posts.length > 0 ? (
+      <section class="post-grid archive-grid">
+        {posts.map((post) => <PortfolioCard post={post} />)}
+      </section>
+    ) : (
+      <p class="empty-state archive-grid">暂无作品。发布第一个作品集后会显示在这里。</p>
+    )
+  }
+</BaseLayout>

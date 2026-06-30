@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const slug = post.id.replace(/\.md$/, "");
+const imageCount = post.data.gallery.length;
+---
+
+<article class="post-card portfolio-card">
+  <a class="post-card-image" href={`/portfolio/${slug}/`} aria-label={`查看作品集：${post.data.title}`}>
+    <img src={post.data.cover} alt="" loading="lazy" />
+    {imageCount > 0 && <span class="portfolio-count">{imageCount} 张</span>}
+  </a>
+  <div class="post-card-body">
+    <p class="post-date">Portfolio</p>
+    <h2><a href={`/portfolio/${slug}/`}>{post.data.title}</a></h2>
+    <p>{post.data.description}</p>
+    <div class="tag-row">
+      {post.data.tags.map((tag) => <span>{tag}</span>)}
+    </div>
+  </div>
+</article>

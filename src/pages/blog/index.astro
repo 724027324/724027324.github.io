@@ -1,9 +1,9 @@
 ---
 import PostCard from "../../components/PostCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPosts } from "../../lib/posts";
+import { getArticles } from "../../lib/posts";
 
-const posts = await getPosts();
+const posts = await getArticles();
 ---
 
 <BaseLayout title="全部文章" description="浏览 yyb 的 Blog 的全部文章。">

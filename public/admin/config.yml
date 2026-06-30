@@ -35,10 +35,6 @@ collections:
               label: 图片
               name: image
               widget: image
-              media_library:
-                allow_multiple: true
-                config:
-                  multiple: true
 
   - name: posts
     label: 文章
@@ -48,15 +44,23 @@ collections:
     extension: md
     format: frontmatter
     fields:
+      - label: 内容类型
+        name: type
+        widget: select
+        default: article
+        options:
+          - { label: 图文文章, value: article }
+          - { label: 作品集, value: portfolio }
       - { label: 标题, name: title, widget: string }
       - { label: 摘要, name: description, widget: text }
       - { label: 发布日期, name: publishDate, widget: datetime, format: "YYYY-MM-DD" }
       - label: 封面图片
         name: cover
         widget: image
-        media_library:
-          allow_multiple: true
-          config:
-            multiple: true
       - { label: 标签, name: tags, widget: list, required: false }
+      - label: 作品集图片
+        name: gallery
+        widget: yyb_gallery
+        required: false
+        manifest_url: /uploads-manifest.json
       - { label: 正文, name: body, widget: markdown }

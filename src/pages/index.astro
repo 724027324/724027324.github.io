@@ -3,9 +3,9 @@ import PhotoMosaic from "../components/PhotoMosaic.astro";
 import PostCard from "../components/PostCard.astro";
 import homeSettings from "../data/home.json";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getPosts } from "../lib/posts";
+import { getArticles } from "../lib/posts";
 
-const latestPosts = (await getPosts()).slice(0, 3);
+const latestPosts = (await getArticles()).slice(0, 3);
 ---
 
 <BaseLayout title="yyb 的 Blog" description="记录 yyb 现场经验、材料观察、项目复盘和个人观点。">
