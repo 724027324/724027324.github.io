@@ -226,6 +226,22 @@ test("portfolio has a dedicated navigation entry and page copy", () => {
   assert.match(portfolioIndex, /Portfolio/);
 });
 
+test("portfolio detail page keeps image proportions in a single masonry layout", () => {
+  const portfolioLayout = read("src/layouts/PortfolioLayout.astro");
+  const styles = read("src/styles/global.css");
+
+  assert.match(portfolioLayout, /masonry-gallery/);
+  assert.doesNotMatch(portfolioLayout, /justified-gallery/);
+  assert.doesNotMatch(portfolioLayout, /\/js\/justified-gallery\.js/);
+  assert.match(styles, /\.masonry-gallery/);
+  assert.match(styles, /column-width/);
+  assert.match(styles, /break-inside:\s*avoid/);
+  assert.match(styles, /height:\s*auto/);
+  assert.doesNotMatch(styles, /\.justified-gallery/);
+  assert.doesNotMatch(styles, /\.portfolio-grid/);
+  assert.doesNotMatch(portfolioLayout, /portfolio-grid/);
+});
+
 test("GitHub Pages workflow builds with npm", () => {
   const workflow = read(".github/workflows/deploy.yml");
 

@@ -298,21 +298,20 @@ main {
   border: 1px solid var(--line);
 }
 
-.portfolio-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+.masonry-gallery {
+  column-gap: 10px;
+  column-width: 260px;
   margin: 0 0 64px;
 }
 
-.portfolio-grid figure {
-  margin: 0;
+.masonry-gallery figure {
+  break-inside: avoid;
+  margin: 0 0 10px;
 }
 
-.portfolio-grid img {
+.masonry-gallery img {
   width: 100%;
-  min-height: 320px;
-  object-fit: cover;
+  height: auto;
   border: 1px solid var(--line);
 }
 
@@ -362,9 +361,6 @@ main {
     grid-template-columns: 1fr;
   }
 
-  .portfolio-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 560px) {

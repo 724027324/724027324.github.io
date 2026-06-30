@@ -24,7 +24,7 @@ const date = post.data.publishDate.toLocaleDateString("zh-CN", {
         {post.data.tags.map((tag) => <span>{tag}</span>)}
       </div>
     </header>
-    <section class="portfolio-grid" aria-label="作品集图片">
+    <section class="masonry-gallery" aria-label="作品集图片">
       {
         post.data.gallery.map((image) => (
           <figure>
