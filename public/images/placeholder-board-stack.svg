@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-label="yyb 堆放占位图">
-  <rect width="900" height="700" fill="#f7f7f1"/>
-  <path d="M120 470h650l-92 88H58z" fill="#40564b"/>
-  <path d="M168 380h650l-92 88H106z" fill="#8e9a91"/>
-  <path d="M216 290h650l-92 88H154z" fill="#c8d0c7"/>
-  <path d="M264 200h560l42 88H216z" fill="#f0eadb"/>
-  <path d="M120 470h650M168 380h650M216 290h650" stroke="#202420" stroke-opacity=".25" stroke-width="8"/>
-  <circle cx="190" cy="160" r="45" fill="#b4793f"/>
-</svg>

@@ -25,8 +25,6 @@ test("Astro blog source files are present", () => {
     "astro.config.mjs",
     "tsconfig.json",
     "src/content/config.ts",
-    "src/content/posts/.gitkeep",
-    "public/uploads/.gitkeep",
     "public/uploads-manifest.json",
     "public/admin/gallery-widget.js",
     "scripts/generate-upload-manifest.mjs",
@@ -53,6 +51,8 @@ test("Astro blog source files are present", () => {
   [
     "public/admin/index.html",
     "public/admin/multiple-upload.js",
+    "src/content/posts/.gitkeep",
+    "public/uploads/.gitkeep",
   ].forEach((path) => {
     assert.equal(existsSync(join(root, path)), false, `${path} should not exist`);
   });
@@ -129,7 +129,7 @@ test("home page reads editable hero settings", () => {
   assert.match(indexPage, /homeSettings/);
   assert.match(indexPage, /homeSettings\.showHero/);
   assert.match(indexPage, /<PhotoMosaic images=\{homeSettings\.images\}/);
-  assert.doesNotMatch(photoMosaic, /placeholder-board/);
+  assert.doesNotMatch(photoMosaic, /placeholder/);
 });
 
 test("empty posts collection builds without loader warnings", () => {
@@ -147,7 +147,7 @@ test("new markdown posts generate detail pages", () => {
   const postPath = join(root, "src/content/posts/codex-render-check.md");
   writeFileSync(
     postPath,
-    `---\ntitle: 临时渲染检查\ndescription: 用于验证新增文章仍可渲染。\npublishDate: 2026-06-26\ncover: /images/placeholder-worksite.svg\ntags:\n  - 测试\n---\n\n这是一篇临时检查文章。\n`,
+    `---\ntitle: 临时渲染检查\ndescription: 用于验证新增文章仍可渲染。\npublishDate: 2026-06-26\ncover: /uploads/dsc06937.jpg\ntags:\n  - 测试\n---\n\n这是一篇临时检查文章。\n`,
     "utf8",
   );
 
@@ -170,12 +170,12 @@ test("article and portfolio entries build separate routes", () => {
   const portfolioPath = join(root, "src/content/posts/codex-portfolio-check.md");
   writeFileSync(
     articlePath,
-    `---\ntype: article\ntitle: 临时图文检查\ndescription: 用于验证图文文章路由。\npublishDate: 2026-06-26\ncover: /images/placeholder-worksite.svg\ntags:\n  - 测试\n---\n\n这是一篇临时图文文章。\n`,
+    `---\ntype: article\ntitle: 临时图文检查\ndescription: 用于验证图文文章路由。\npublishDate: 2026-06-26\ncover: /uploads/dsc06937.jpg\ntags:\n  - 测试\n---\n\n这是一篇临时图文文章。\n`,
     "utf8",
   );
   writeFileSync(
     portfolioPath,
-    `---\ntype: portfolio\ntitle: 临时作品集检查\ndescription: 用于验证作品集路由。\npublishDate: 2026-06-26\ncover: /images/placeholder-board-detail.svg\ntags:\n  - 测试\ngallery:\n  - /images/placeholder-board-detail.svg\n  - /images/placeholder-board-stack.svg\n---\n\n这是一个临时作品集说明。\n`,
+    `---\ntype: portfolio\ntitle: 临时作品集检查\ndescription: 用于验证作品集路由。\npublishDate: 2026-06-26\ncover: /uploads/dsc06937.jpg\ntags:\n  - 测试\ngallery:\n  - /uploads/dsc06937.jpg\n  - /uploads/dsc07058.jpg\n---\n\n这是一个临时作品集说明。\n`,
     "utf8",
   );
 
@@ -205,6 +205,8 @@ test("content loading uses public Astro APIs", () => {
   assert.doesNotMatch(config, new RegExp("entry" + "Types"));
   assert.doesNotMatch(config, /type:\s*"content"/);
   assert.match(posts, /getPosts/);
+  assert.doesNotMatch(posts, /listMarkdownFiles/);
+  assert.doesNotMatch(posts, /existsSync/);
   assert.doesNotMatch(readme, /\\.worktrees/);
   assert.doesNotMatch(readme, new RegExp(["insulation", "board", "blog"].join("-")));
 });
@@ -293,9 +295,6 @@ test("Chinese documents are readable UTF-8 text", () => {
 test("public site uses yyb branding and keeps admin out of navigation", () => {
   const publicFiles = [
     "README.md",
-    "public/images/placeholder-board-detail.svg",
-    "public/images/placeholder-board-stack.svg",
-    "public/images/placeholder-worksite.svg",
     "src/components/PhotoMosaic.astro",
     ...listFiles("src/content/posts").filter((path) => statSync(join(root, path)).isFile()),
     "src/layouts/BaseLayout.astro",
@@ -313,4 +312,10 @@ test("public site uses yyb branding and keeps admin out of navigation", () => {
   const layout = read("src/layouts/BaseLayout.astro");
   assert.match(layout, /yyb 的 Blog/);
   assert.doesNotMatch(layout, /href="\/admin\/"/);
+});
+
+test("project does not keep obsolete placeholder image assets", () => {
+  assert.equal(existsSync(join(root, "public/images/placeholder-board-detail.svg")), false);
+  assert.equal(existsSync(join(root, "public/images/placeholder-board-stack.svg")), false);
+  assert.equal(existsSync(join(root, "public/images/placeholder-worksite.svg")), false);
 });

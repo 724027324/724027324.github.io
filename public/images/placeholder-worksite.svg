@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-label="yyb 现场环境占位图">
-  <rect width="900" height="700" fill="#eceee5"/>
-  <path d="M0 475h900v225H0z" fill="#40564b"/>
-  <path d="M90 390h230v85H90zm270-55h230v140H360zm270-95h180v235H630z" fill="#f7f7f1" stroke="#202420" stroke-opacity=".3" stroke-width="8"/>
-  <path d="M110 410h190m80-45h190m80-95h140M110 448h190m80-45h190m80-95h140" stroke="#b4793f" stroke-width="10"/>
-  <path d="M80 530h740" stroke="#d8ded6" stroke-width="18"/>
-  <path d="M155 610h260m80 0h250" stroke="#d8ded6" stroke-width="14"/>
-</svg>

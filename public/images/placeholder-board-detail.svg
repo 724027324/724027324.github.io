@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-label="yyb 边角细节占位图">
-  <rect width="900" height="700" fill="#d8ded6"/>
-  <path d="M110 115h600v430H110z" fill="#f4f1e8" stroke="#40564b" stroke-width="10"/>
-  <path d="M175 180h600v430H175z" fill="#b8c3ba" stroke="#40564b" stroke-width="10"/>
-  <path d="M220 225h510v42H220zm0 82h510v42H220zm0 82h510v42H220zm0 82h510v42H220z" fill="#eef0e8"/>
-  <path d="M175 180l-65-65m665 65l-65-65m65 495l-65-65" stroke="#b4793f" stroke-width="12"/>
-</svg>
