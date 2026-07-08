@@ -1,11 +1,13 @@
 ---
 import PhotoMosaic from "../components/PhotoMosaic.astro";
+import PortfolioCard from "../components/PortfolioCard.astro";
 import PostCard from "../components/PostCard.astro";
 import homeSettings from "../data/home.json";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getArticles } from "../lib/posts";
+import { getArticles, getPortfolioItems } from "../lib/posts";
 
 const latestPosts = (await getArticles()).slice(0, 3);
+const latestPortfolioItems = (await getPortfolioItems()).slice(0, 3);
 ---
 
 <BaseLayout title="yyb 的 Blog" description="记录 yyb 现场经验、材料观察、项目复盘和个人观点。">
@@ -33,11 +35,30 @@ const latestPosts = (await getArticles()).slice(0, 3);
   <section class="intro-band">
     <div>
       <p class="eyebrow">关于这个 Blog</p>
-      <h2>把现场经验从零散印象变成可回看的记录。</h2>
+      <h2>把生活里的画面和判断，整理成可回看的记录。</h2>
     </div>
     <p>
-      后续可以把你自己拍摄的 yyb 照片上传到后台，用每篇文章串起观察、观点和项目复盘。
+      这里不是作品陈列柜，也不是单纯的笔记本。作品集负责保存成组照片，文章负责留下经验、观点和复盘，它们一起组成 yyb 的长期记录。
     </p>
+  </section>
+
+  <section class="section feature-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Photo Journal</p>
+        <h2>最新作品集</h2>
+      </div>
+      <a class="text-link" href="/portfolio/">全部作品集</a>
+    </div>
+    {
+      latestPortfolioItems.length > 0 ? (
+        <div class="post-grid portfolio-preview-grid">
+          {latestPortfolioItems.map((post) => <PortfolioCard post={post} />)}
+        </div>
+      ) : (
+        <p class="empty-state">暂无作品。你可以进入后台发布第一个作品集。</p>
+      )
+    }
   </section>
 
   <section class="section">

@@ -16,7 +16,7 @@ const date = post.data.publishDate.toLocaleDateString("zh-CN", {
 
 <article class="post-card">
   <a class="post-card-image" href={`/blog/${slug}/`} aria-label={`阅读：${post.data.title}`}>
-    <img src={post.data.cover} alt="" loading="lazy" />
+    <img src={post.data.cover} alt={`文章封面：${post.data.title}`} width="720" height="540" loading="lazy" />
   </a>
   <div class="post-card-body">
     <p class="post-date">{date}</p>

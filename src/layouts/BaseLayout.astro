@@ -8,6 +8,22 @@ interface Props {
 
 const { title, description } = Astro.props;
 const siteTitle = title === "yyb 的 Blog" ? title : `${title} | yyb 的 Blog`;
+const currentPath = Astro.url.pathname;
+
+const navItems = [
+  { href: "/", label: "首页" },
+  { href: "/blog/", label: "文章" },
+  { href: "/portfolio/", label: "作品集" },
+  { href: "/about/", label: "关于" },
+];
+
+function isCurrent(href: string) {
+  if (href === "/") {
+    return currentPath === "/";
+  }
+
+  return currentPath.startsWith(href);
+}
 ---
 
 <!doctype html>
@@ -16,26 +32,31 @@ const siteTitle = title === "yyb 的 Blog" ? title : `${title} | yyb 的 Blog`;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f4ea" />
     <title>{siteTitle}</title>
   </head>
   <body>
+    <a class="skip-link" href="#content">跳到主要内容</a>
     <header class="site-header">
       <a class="brand" href="/" aria-label="回到首页">
         <span class="brand-mark"></span>
         <span>yyb 的 Blog</span>
       </a>
       <nav class="nav" aria-label="主导航">
-        <a href="/">首页</a>
-        <a href="/blog/">文章</a>
-        <a href="/portfolio/">作品集</a>
-        <a href="/about/">关于</a>
+        {
+          navItems.map((item) => (
+            <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+              {item.label}
+            </a>
+          ))
+        }
       </nav>
     </header>
-    <main>
+    <main id="content">
       <slot />
     </main>
     <footer class="site-footer">
-      <p>用图片和文字记录 yyb 项目里的现场经验、材料观察与个人判断。</p>
+      <p>用照片和文字记录 yyb 的生活涟漪、现场经验与个人判断。</p>
     </footer>
   </body>
 </html>

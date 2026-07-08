@@ -12,29 +12,133 @@ const date = post.data.publishDate.toLocaleDateString("zh-CN", {
   month: "long",
   day: "numeric",
 });
+const imageCount = post.data.gallery.length;
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
   <article class="portfolio-page">
-    <header class="post-hero portfolio-hero">
-      <p class="eyebrow">{date} / Portfolio</p>
-      <h1>{post.data.title}</h1>
-      <p class="lede">{post.data.description}</p>
-      <div class="tag-row" aria-label="作品集标签">
-        {post.data.tags.map((tag) => <span>{tag}</span>)}
+    <header class="portfolio-cover-hero">
+      <img
+        class="portfolio-cover-image"
+        src={post.data.cover}
+        alt={`作品集封面：${post.data.title}`}
+        width="1800"
+        height="1200"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="portfolio-hero-panel">
+        <p class="eyebrow">{date} / Portfolio</p>
+        <h1>{post.data.title}</h1>
+        <p class="lede">{post.data.description}</p>
+        <div class="portfolio-hero-meta" aria-label="作品集信息">
+          <span>{imageCount} 张照片</span>
+          <a href="/portfolio/">返回作品集</a>
+        </div>
+        <div class="tag-row" aria-label="作品集标签">
+          {post.data.tags.map((tag) => <span>{tag}</span>)}
+        </div>
       </div>
     </header>
     <section class="masonry-gallery" aria-label="作品集图片">
       {
-        post.data.gallery.map((image) => (
+        post.data.gallery.map((image, index) => (
           <figure>
-            <img src={image} alt="" loading="lazy" />
+            <img
+              src={image}
+              alt={`${post.data.title} 作品图片 ${index + 1}`}
+              width="1200"
+              height="900"
+              loading="lazy"
+              data-lightbox-image
+              data-lightbox-index={index}
+            />
           </figure>
         ))
       }
     </section>
+    <dialog class="portfolio-lightbox" aria-label={`${post.data.title} 图片预览`} aria-modal="true">
+      <button class="lightbox-close" type="button" data-lightbox-close aria-label="关闭图片预览">关闭</button>
+      <button class="lightbox-nav lightbox-prev" type="button" data-lightbox-prev aria-label="上一张图片">上一张</button>
+      <figure>
+        <img src="" alt="" width="1600" height="1200" data-lightbox-current />
+        <figcaption data-lightbox-caption></figcaption>
+      </figure>
+      <button class="lightbox-nav lightbox-next" type="button" data-lightbox-next aria-label="下一张图片">下一张</button>
+    </dialog>
     <div class="article-body">
       <slot />
     </div>
+    <nav class="portfolio-bottom-nav" aria-label="作品集底部导航">
+      <a href="/portfolio/">返回作品集</a>
+      <a href="/portfolio/">继续看下一组作品</a>
+    </nav>
   </article>
+  <script is:inline>
+    const galleryImages = Array.from(document.querySelectorAll("[data-lightbox-image]"));
+    const lightbox = document.querySelector(".portfolio-lightbox");
+    const currentImage = lightbox?.querySelector("[data-lightbox-current]");
+    const caption = lightbox?.querySelector("[data-lightbox-caption]");
+    const closeButton = lightbox?.querySelector("[data-lightbox-close]");
+    const previousButton = lightbox?.querySelector("[data-lightbox-prev]");
+    const nextButton = lightbox?.querySelector("[data-lightbox-next]");
+    let currentIndex = 0;
+
+    function showImage(index) {
+      if (!lightbox || !currentImage || !caption || galleryImages.length === 0) {
+        return;
+      }
+
+      currentIndex = (index + galleryImages.length) % galleryImages.length;
+      const selectedImage = galleryImages[currentIndex];
+      currentImage.src = selectedImage.src;
+      currentImage.alt = selectedImage.alt;
+      caption.textContent = `${currentIndex + 1} / ${galleryImages.length}`;
+    }
+
+    function openLightbox(index) {
+      if (!lightbox) {
+        return;
+      }
+
+      showImage(index);
+      lightbox.showModal();
+    }
+
+    function closeLightbox() {
+      lightbox?.close();
+    }
+
+    galleryImages.forEach((image, index) => {
+      image.addEventListener("click", () => openLightbox(index));
+    });
+
+    closeButton?.addEventListener("click", closeLightbox);
+    previousButton?.addEventListener("click", () => showImage(currentIndex - 1));
+    nextButton?.addEventListener("click", () => showImage(currentIndex + 1));
+
+    lightbox?.addEventListener("click", (event) => {
+      if (event.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (!lightbox?.open) {
+        return;
+      }
+
+      if (event.key === "Escape") {
+        closeLightbox();
+      }
+
+      if (event.key === "ArrowRight") {
+        showImage(currentIndex + 1);
+      }
+
+      if (event.key === "ArrowLeft") {
+        showImage(currentIndex - 1);
+      }
+    });
+  </script>
 </BaseLayout>

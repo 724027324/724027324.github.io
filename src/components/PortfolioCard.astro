@@ -8,15 +8,23 @@ interface Props {
 const { post } = Astro.props;
 const slug = post.id.replace(/\.md$/, "");
 const imageCount = post.data.gallery.length;
+const date = post.data.publishDate.toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
 ---
 
 <article class="post-card portfolio-card">
   <a class="post-card-image" href={`/portfolio/${slug}/`} aria-label={`查看作品集：${post.data.title}`}>
-    <img src={post.data.cover} alt="" loading="lazy" />
+    <img src={post.data.cover} alt={`作品集封面：${post.data.title}`} width="720" height="540" loading="lazy" />
     {imageCount > 0 && <span class="portfolio-count">{imageCount} 张</span>}
   </a>
   <div class="post-card-body">
-    <p class="post-date">Portfolio</p>
+    <p class="post-date portfolio-card-meta">
+      <span>{imageCount} 张照片</span>
+      <time datetime={post.data.publishDate.toISOString()}>{date}</time>
+    </p>
     <h2><a href={`/portfolio/${slug}/`}>{post.data.title}</a></h2>
     <p>{post.data.description}</p>
     <div class="tag-row">

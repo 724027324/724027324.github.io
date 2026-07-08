@@ -10,7 +10,15 @@ const displayImages = images.slice(0, 3);
 <div class="photo-mosaic" aria-label="yyb 现场图片拼贴">
   {
     displayImages.map((src, index) => (
-      <img class={index === 0 ? "mosaic-large" : undefined} src={src} alt="" loading="eager" />
+      <img
+        class={index === 0 ? "mosaic-large" : undefined}
+        src={src}
+        alt={`首页照片 ${index + 1}`}
+        width={index === 0 ? 760 : 520}
+        height={index === 0 ? 920 : 420}
+        loading="eager"
+        fetchpriority={index === 0 ? "high" : "auto"}
+      />
     ))
   }
 </div>

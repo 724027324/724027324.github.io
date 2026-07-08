@@ -222,8 +222,8 @@ test("portfolio has a dedicated navigation entry and page copy", () => {
   const layout = read("src/layouts/BaseLayout.astro");
   const portfolioIndex = read("src/pages/portfolio/index.astro");
 
-  assert.match(layout, /href="\/portfolio\/"/);
-  assert.match(layout, />作品集</);
+  assert.match(layout, /href:\s*"\/portfolio\/"/);
+  assert.match(layout, /label:\s*"作品集"/);
   assert.match(portfolioIndex, /作品集/);
   assert.match(portfolioIndex, /Portfolio/);
 });
@@ -242,6 +242,73 @@ test("portfolio detail page keeps image proportions in a single masonry layout",
   assert.doesNotMatch(styles, /\.justified-gallery/);
   assert.doesNotMatch(styles, /\.portfolio-grid/);
   assert.doesNotMatch(portfolioLayout, /portfolio-grid/);
+});
+
+test("photo journal redesign exposes portfolio-first navigation and accessible interaction states", () => {
+  const layout = read("src/layouts/BaseLayout.astro");
+  const homePage = read("src/pages/index.astro");
+  const photoMosaic = read("src/components/PhotoMosaic.astro");
+  const portfolioLayout = read("src/layouts/PortfolioLayout.astro");
+  const styles = read("src/styles/global.css");
+
+  assert.match(layout, /class="skip-link"/);
+  assert.match(layout, /href="#content"/);
+  assert.match(layout, /<main id="content"/);
+  assert.match(homePage, /getPortfolioItems/);
+  assert.match(homePage, /latestPortfolioItems/);
+  assert.match(homePage, /最新作品集/);
+  assert.match(homePage, /href="\/portfolio\/"/);
+  assert.match(photoMosaic, /width=/);
+  assert.match(photoMosaic, /height=/);
+  assert.match(portfolioLayout, /width=/);
+  assert.match(portfolioLayout, /height=/);
+  assert.match(styles, /:focus-visible/);
+  assert.match(styles, /prefers-reduced-motion/);
+  assert.match(styles, /text-wrap:\s*balance/);
+  assert.match(styles, /touch-action:\s*manipulation/);
+});
+
+test("portfolio pages use a gallery index and detail lightbox without changing masonry image proportions", () => {
+  const portfolioIndex = read("src/pages/portfolio/index.astro");
+  const portfolioCard = read("src/components/PortfolioCard.astro");
+  const portfolioLayout = read("src/layouts/PortfolioLayout.astro");
+  const styles = read("src/styles/global.css");
+
+  assert.match(portfolioIndex, /portfolio-index-grid/);
+  assert.match(portfolioIndex, /gallery-index-heading/);
+  assert.doesNotMatch(portfolioIndex, /post-grid archive-grid/);
+  assert.match(portfolioCard, /portfolio-card-meta/);
+  assert.match(portfolioCard, /张照片/);
+  assert.match(portfolioCard, /time datetime/);
+  assert.match(portfolioLayout, /data-lightbox-image/);
+  assert.match(portfolioLayout, /portfolio-lightbox/);
+  assert.match(portfolioLayout, /aria-modal="true"/);
+  assert.match(portfolioLayout, /Escape/);
+  assert.match(portfolioLayout, /ArrowRight/);
+  assert.match(portfolioLayout, /ArrowLeft/);
+  assert.match(styles, /\.portfolio-index-grid/);
+  assert.match(styles, /\.portfolio-lightbox/);
+  assert.match(styles, /content-visibility:\s*auto/);
+  assert.match(styles, /contain-intrinsic-size/);
+  assert.match(styles, /\.masonry-gallery img[\s\S]*height:\s*auto/);
+});
+
+test("portfolio detail page uses an immersive cover-led presentation", () => {
+  const portfolioLayout = read("src/layouts/PortfolioLayout.astro");
+  const styles = read("src/styles/global.css");
+
+  assert.match(portfolioLayout, /portfolio-cover-hero/);
+  assert.match(portfolioLayout, /portfolio-cover-image/);
+  assert.match(portfolioLayout, /portfolio-hero-meta/);
+  assert.match(portfolioLayout, /post\.data\.gallery\.length/);
+  assert.match(portfolioLayout, /张照片/);
+  assert.match(portfolioLayout, /href="\/portfolio\/"/);
+  assert.match(portfolioLayout, /返回作品集/);
+  assert.match(portfolioLayout, /继续看下一组作品/);
+  assert.match(styles, /\.portfolio-cover-hero/);
+  assert.match(styles, /\.portfolio-cover-image/);
+  assert.match(styles, /\.portfolio-hero-panel/);
+  assert.match(styles, /\.portfolio-bottom-nav/);
 });
 
 test("GitHub Pages workflow builds with npm", () => {

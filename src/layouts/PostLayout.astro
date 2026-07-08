@@ -23,7 +23,7 @@ const date = post.data.publishDate.toLocaleDateString("zh-CN", {
       <div class="tag-row" aria-label="文章标签">
         {post.data.tags.map((tag) => <span>{tag}</span>)}
       </div>
-      <img src={post.data.cover} alt="" loading="eager" />
+      <img src={post.data.cover} alt={`文章封面：${post.data.title}`} width="1440" height="960" loading="eager" />
     </header>
     <div class="article-body">
       <slot />
